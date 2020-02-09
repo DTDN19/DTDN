@@ -7,16 +7,11 @@ from torch.nn import functional as F
 from torch.nn import init
 import torchvision
 import pdb
-<<<<<<< HEAD
 # use the DTDN+IN:
 # from . import resnet_in as resnet
 
 # use the DTDN:
 from . import resnet
-=======
-from . import resnet
-from . import mobilenet
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 
 
 
@@ -27,10 +22,7 @@ class DynamicNet(nn.Module):
 
     def __init__(self, channels=512, reduction=16):
         super(DynamicNet, self).__init__()
-<<<<<<< HEAD
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
-=======
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
         self.max_pool = nn.AdaptiveMaxPool2d(1)
         self.fc1 = nn.Conv2d(channels, channels // reduction, kernel_size=1, padding=0)
         self.relu = nn.ReLU(inplace=True)
@@ -40,10 +32,7 @@ class DynamicNet(nn.Module):
         self.shift = lambda x: -5 * (x - 0.1)
         #self.shift = lambda x:self.a * x + self.b
         self.sigmoid = nn.Sigmoid()
-<<<<<<< HEAD
         # self.sigmoid = nn.Tanh()
-=======
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
         # self.init_params()
 
     def forward(self, x):
@@ -75,17 +64,6 @@ class DynamicNet(nn.Module):
                     init.constant(m.bias, 0)
 
 class Encoder(nn.Module):
-<<<<<<< HEAD
-=======
-    __factory = {
-        18: resnet.resnet18,
-        34: resnet.resnet34,
-        50: resnet.resnet50,
-        101: resnet.resnet101,
-        152: resnet.resnet152,
-    }
-
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
     def __init__(self, depth, pretrained=True, cut_at_pooling=False,
                  num_features=0, norm=False, dropout=0, num_classes=0, target_num=0, cut_layer=None):
         super(Encoder, self).__init__()
@@ -95,15 +73,7 @@ class Encoder(nn.Module):
         self.cut_at_pooling = cut_at_pooling
         self.cut_layer = cut_layer
 
-<<<<<<< HEAD
         self.base = torchvision.models.resnet50(pretrained=pretrained)
-=======
-        # Construct base (pretrained) resnet
-        if depth not in Encoder.__factory:
-            raise KeyError("Unsupported depth:", depth)
-        self.base = Encoder.__factory[depth](pretrained=pretrained)
-        # self.base_b = ResNet.__factory[depth](pretrained=pretrained)
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 
     
         if not self.pretrained:
@@ -145,18 +115,6 @@ class ResidualBlock(nn.Module):
         return self.main(x)
 
 class TaskNet(nn.Module):
-<<<<<<< HEAD
-=======
-    __factory = {
-        18: resnet.resnet18,
-        34: resnet.resnet34,
-        # 50: torchvision.models.resnet50,
-        50: resnet.resnet50,
-        101: resnet.resnet101,
-        152: resnet.resnet152,
-    }
-
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
     def __init__(self, depth, pretrained=True, cut_at_pooling=False,
                  num_features=0, norm=False, dropout=0, num_classes=0, target_num=0, cut_layer=None):
         super(TaskNet, self).__init__()
@@ -166,15 +124,7 @@ class TaskNet(nn.Module):
         self.cut_at_pooling = cut_at_pooling
         self.cut_layer = cut_layer
         self.target_num = target_num
-<<<<<<< HEAD
         self.base = resnet.resnet50(pretrained=pretrained)
-=======
-
-        # Construct base (pretrained) resnet
-        if depth not in TaskNet.__factory:
-            raise KeyError("Unsupported depth:", depth)
-        self.base = TaskNet.__factory[depth](pretrained=pretrained)
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 
         if not self.cut_at_pooling:
             self.num_features = num_features
@@ -207,18 +157,10 @@ class TaskNet(nn.Module):
                 init.constant_(self.target_classifier.bias, 0)
 
         if not self.pretrained:
-<<<<<<< HEAD
             self.reset_params() 
 
     def forward(self, x, output_feature=None, tgt_output_feature=None, domain='source'):
         Flag = False
-=======
-            self.reset_params()
-
-    def forward(self, x, output_feature=None, tgt_output_feature=None, domain='source'):
-        Flag = False
-        # Flag = True
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
         for name, module in self.base._modules.items():
             if name == self.cut_layer:
                 Flag = True
@@ -230,10 +172,7 @@ class TaskNet(nn.Module):
 
         if self.cut_at_pooling:
             return x
-<<<<<<< HEAD
         
-=======
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 
         if output_feature == 'pool5':
             x = F.max_pool2d(x, x.size()[2:])
@@ -243,15 +182,9 @@ class TaskNet(nn.Module):
 
         x = F.max_pool2d(x, x.size()[2:])
         x = x.view(x.size(0), -1)
-<<<<<<< HEAD
         if self.has_embedding:
             x = self.feat(x)
             triplet_feature = x
-=======
-
-        if self.has_embedding:
-            x = self.feat(x)
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
             x = self.feat_bn(x)
         if tgt_output_feature == 'pool5':
             tgt_feat = x
@@ -262,26 +195,14 @@ class TaskNet(nn.Module):
             x = F.normalize(x)
         elif self.has_embedding:
             x = F.relu(x)
-<<<<<<< HEAD
-=======
-        # triplet feature
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
         if self.dropout > 0:
             x = self.drop(x)
         if self.num_classes > 0:
             x_class = self.classifier(x)
-<<<<<<< HEAD
         if domain == 'target':
             x_class = self.target_classifier(x)
         # two outputs
         return x_class, triplet_feature
-=======
-            # x_class = nn.Softmax(dim=-1)(x_class)
-        if domain == 'target':
-            x_class = self.target_classifier(x)
-        # two outputs
-        return x_class, x
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 
     def reset_params(self):
         for m in self.modules():
@@ -296,9 +217,5 @@ class TaskNet(nn.Module):
                 init.normal(m.weight, std=0.001)
                 if m.bias is not None:
                     init.constant(m.bias, 0)
-<<<<<<< HEAD
-
-=======
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 def resnet50(**kwargs):
     return Encoder(50, **kwargs), TaskNet(50, **kwargs), DynamicNet()

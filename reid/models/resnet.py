@@ -1,15 +1,11 @@
 import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
-<<<<<<< HEAD
 import torch
-
 import numpy as np
 from . import upsample
 import cv2
 from PIL import Image
 import torch.nn.functional as F
-=======
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 
 
 __all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
@@ -23,11 +19,6 @@ model_urls = {
     'resnet101': 'https://download.pytorch.org/models/resnet101-5d3b4d8f.pth',
     'resnet152': 'https://download.pytorch.org/models/resnet152-b121ed2d.pth',
 }
-<<<<<<< HEAD
-=======
-
-
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 def conv3x3(in_planes, out_planes, stride=1, groups=1):
     """3x3 convolution with padding"""
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
@@ -73,10 +64,6 @@ class BasicBlock(nn.Module):
         out += identity
         out = self.relu(out)
 
-<<<<<<< HEAD
-
-=======
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
         return out
 
 

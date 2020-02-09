@@ -140,8 +140,4 @@ class DA(object):
         print("  query           |  {:5d}  | {:8d}"
               .format(self.num_query_ids, len(self.query)))
         print("  gallery         |  {:5d}  | {:8d}"
-<<<<<<< HEAD
               .format(self.num_gallery_ids, len(self.gallery)))
-=======
-              .format(self.num_gallery_ids, len(self.gallery)))
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32

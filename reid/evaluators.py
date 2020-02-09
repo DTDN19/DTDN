@@ -21,7 +21,6 @@ import os.path as osp
 import shutil
 from sklearn.metrics import f1_score, accuracy_score, confusion_matrix
 
-<<<<<<< HEAD
 from PIL import Image
 from .models import resnet
 import torch.nn as nn
@@ -31,8 +30,6 @@ import torch.nn.functional as F
 from .models import upsample
 
 
-=======
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 
 
 
@@ -40,13 +37,9 @@ from .models import upsample
 def visualize_ranked_results(distmat, query, gallery, save_dir, topk=20):
     """
     Visualize ranked results
-<<<<<<< HEAD
 
     Support both imgreid and vidreid
 
-=======
-    Support both imgreid and vidreid
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
     Args:
     - distmat: distance matrix of shape (num_query, num_gallery).
     - dataset: a 2-tuple containing (query, gallery), each contains a list of (img_path, pid, camid);
@@ -130,15 +123,8 @@ def extract_cnn_feature(model, inputs, fnames, output_feature=None, name=None, p
     inputs = inputs.to(device)
     with torch.no_grad():
         outputs = model[0](inputs)
-<<<<<<< HEAD
         outputs *= (model[2](outputs))
         outputs = model[1](outputs, output_feature='pool5')
-=======
-        outputs *= model[2](outputs)
-        # outputs = torch.cat([outputs[:,:511,:,:],torch.zeros(outputs[:,-1:,:,:].shape).cuda()],1)
-        outputs = model[1](outputs, output_feature='pool5')
-        # outputs = model[1](inputs, output_feature='pool5')
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
         outputs = outputs.data.cpu()
     return outputs
 
@@ -162,7 +148,6 @@ def extract_features(model, data_loader, print_freq=1, output_feature=None):
         batch_time.update(time.time() - end)
         end = time.time()
 
-<<<<<<< HEAD
         # if (i + 1) % print_freq == 0:
         #     print('Extract Features: [{}/{}]\t'
         #           'Time {:.3f} ({:.3f})\t'
@@ -173,19 +158,6 @@ def extract_features(model, data_loader, print_freq=1, output_feature=None):
 
     return features, labels
 
-=======
-        if (i + 1) % print_freq == 0:
-            print('Extract Features: [{}/{}]\t'
-                  'Time {:.3f} ({:.3f})\t'
-                  'Data {:.3f} ({:.3f})\t'
-                  .format(i + 1, len(data_loader),
-                          batch_time.val, batch_time.avg,
-                          data_time.val, data_time.avg))
-
-    return features, labels
-
-
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 def pairwise_distance(query_features, gallery_features, query=None, gallery=None):
     x = torch.cat([query_features[f].unsqueeze(0) for f, _, _, _ in query], 0)
     y = torch.cat([gallery_features[f].unsqueeze(0) for f, _, _, _ in gallery], 0)
@@ -295,7 +267,6 @@ class Evaluator(object):
                     outputs *=  self.model[2](outputs)
                     logits, _ = self.model[1](outputs)
 
-<<<<<<< HEAD
                 # loss = criterion[0](logits, targets)
 
                 #measure accuracy and record loss
@@ -305,8 +276,6 @@ class Evaluator(object):
                 #         print (logits[i])
                 #         print (a[i],targets[i])
 
-=======
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
                 #measure accuracy and record loss
 
                 pre_class += logits.argmax(dim=-1).tolist()
@@ -321,7 +290,6 @@ class Evaluator(object):
             for i in range(len(pre_class)):
                 if pre_class[i] == groundtruth[i]:
                     acc[groundtruth[i]] += 1
-<<<<<<< HEAD
                 # if groundtruth[i] == 8:
                 #     print (pre_class[i], ":", soft_logits[i], soft_logits_all[i][8])
                 if soft_logits[i] < 0.3 and pre_class[i]!=8:
@@ -332,13 +300,6 @@ class Evaluator(object):
 
             # print (score)
             # print (score_num)
-=======
-                if soft_logits[i] < 0.25 and pre_class[i]!=8:
-                    pre_class[i] = 10
-                if pre_class[i] == groundtruth[i]:
-                    os_acc[groundtruth[i]] += 1
-                    
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
             print(allnum)
             print (acc)
             print (os_acc)
@@ -347,7 +308,6 @@ class Evaluator(object):
                 num += os_acc[i]*1.0/allnum[i]
             print ("OS*:",num/10)
             print ("OS:", (num+os_acc[10]/allnum[10])/11)
-<<<<<<< HEAD
             # print ("all:", sum([acc[i]/allnum[i] for i in range(11)])/11)
             # print ("all:", sum([acc[i]/allnum[i] for i in range(10)])/10)
             
@@ -358,7 +318,3 @@ class Evaluator(object):
 
         return (num+os_acc[10]/allnum[10])/11 * 100
     
-=======
-
-        return (num+os_acc[10]/allnum[10])/11 * 100
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32

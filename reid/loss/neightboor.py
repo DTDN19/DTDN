@@ -6,8 +6,6 @@ import numpy as np
 import math
 
 
-<<<<<<< HEAD
-=======
 class ExemplarMemory(Function):
     def __init__(self, em, alpha=0.01):
         super(ExemplarMemory, self).__init__()
@@ -29,14 +27,12 @@ class ExemplarMemory(Function):
             self.em[y] /= self.em[y].norm()
         return grad_inputs, None
 
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 class InvNet(nn.Module):
     def __init__(self, num_features, num_classes, beta=0.05, knn=6, alpha=0.01):
         super(InvNet, self).__init__()
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.num_features = num_features
         self.num_classes = num_classes
-<<<<<<< HEAD
         self.alpha = alpha  
         self.beta = beta  
         self.knn = knn  
@@ -57,7 +53,6 @@ class InvNet(nn.Module):
         return loss
 
     def smooth_loss(self, tgt_feature, tgt_label):
-=======
         self.alpha = alpha  # Memory update rate
         self.beta = beta  # Temperature fact
         self.knn = knn  # Knn for neighborhood invariance
@@ -84,7 +79,6 @@ class InvNet(nn.Module):
         tgt_feature: [128, 16522], similarity of batch & targets
         tgt_label: see forward
         '''
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
         mask = self.smooth_hot(tgt_feature.detach().clone(), tgt_label.detach().clone(), self.knn)
         outputs = F.log_softmax(tgt_feature, dim=1)
         loss = - (mask * outputs)
@@ -93,14 +87,10 @@ class InvNet(nn.Module):
         return loss
 
     def smooth_hot(self, tgt_feature, targets, k=6):
-<<<<<<< HEAD
         mask = torch.zeros(tgt_feature.size()).to(self.device)
-
-        k=7
-
+        k=10
         _, topk = tgt_feature.topk(k, dim=1)
         mask.scatter_(1, topk, 2)
-=======
         '''
         see smooth_loss
         '''
@@ -115,7 +105,6 @@ class InvNet(nn.Module):
         # mask.scatter_(1, topk[:2], 2)
         # mask.scatter_(1, topk[2:4], 1.0)
         # mask.scatter_(1, topk[4:], 0.5)
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 
         index_2d = targets[..., None]
         mask.scatter_(1, index_2d, 3)

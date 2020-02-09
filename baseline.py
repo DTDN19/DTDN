@@ -18,11 +18,7 @@ from reid.trainers import Trainer
 from reid.evaluators import Evaluator
 from reid.utils.data import transforms as T
 from reid.utils.data.preprocessor import Preprocessor
-<<<<<<< HEAD
 from reid.utils.data.sampler import RandomIdentitySampler, IdentitySampler
-=======
-from reid.utils.data.sampler import RandomIdentitySampler
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 from reid.utils.logging import Logger
 from reid.utils.serialization import load_checkpoint, save_checkpoint
 
@@ -40,7 +36,6 @@ def get_data(data_dir, source, target, height, width, batch_size, re=0, workers=
     num_classes = dataset.num_train_ids
     target_num_classes = dataset.target_pindex
 
-<<<<<<< HEAD
     source_train_transformer = T.Compose([
         T.Resize((256, 128), interpolation=3),
         T.Pad(10),
@@ -62,26 +57,12 @@ def get_data(data_dir, source, target, height, width, batch_size, re=0, workers=
     ])
     test_transformer = T.Compose([
         T.Resize((height,width), interpolation=3),
-=======
-    train_transformer = T.Compose([
-        T.Resize((height, width)),
-        T.RandomCrop((256,128)),
-        T.RandomHorizontalFlip(),
-        T.ToTensor(),
-        normalizer,
-        T.RandomErasing(EPSILON=re),
-    ])
-
-    test_transformer = T.Compose([
-        T.Resize((height, width), interpolation=3),
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
         T.ToTensor(),
         normalizer,
     ])
 
     source_train_loader = DataLoader(
         Preprocessor(dataset.source_train, root=osp.join(dataset.source_images_dir, dataset.source_train_path),
-<<<<<<< HEAD
                      transform=source_train_transformer),
         batch_size=batch_size, num_workers=workers,
         shuffle=True, pin_memory=True, drop_last=True)
@@ -95,16 +76,6 @@ def get_data(data_dir, source, target, height, width, batch_size, re=0, workers=
         shuffle=True, pin_memory=True, drop_last=True)
         # sampler=RandomIdentitySampler(dataset.source_train, batch_size, 4),
         # pin_memory=True, drop_last=True) 
-=======
-                     transform=train_transformer),
-        batch_size=batch_size, num_workers=workers,
-        shuffle=True, pin_memory=True, drop_last=True)
-    target_train_loader = DataLoader(
-        Preprocessor(dataset.target_train, root=osp.join(dataset.target_images_dir, dataset.target_train_path),
-                     transform=train_transformer),
-        batch_size=batch_size, num_workers=workers,
-        shuffle=True, pin_memory=True, drop_last=True)
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
     query_loader = DataLoader(
         Preprocessor(dataset.query,
                      root=osp.join(dataset.target_images_dir, dataset.query_path), transform=test_transformer),
@@ -121,34 +92,22 @@ def get_data(data_dir, source, target, height, width, batch_size, re=0, workers=
 def main(args):
     cudnn.benchmark = True
     # Redirect print to both console and log file
-<<<<<<< HEAD
     if not args.evaluate:
         sys.stdout = Logger(osp.join(args.logs_dir, 'log.txt'))
-=======
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 
     # Create data loaders
     dataset, num_classes, target_num_classes, source_train_loader, target_train_loader, query_loader, gallery_loader = \
         get_data(args.data_dir, args.source, args.target, args.height,
                  args.width, args.batch_size, args.re, args.workers)
 
-<<<<<<< HEAD
     if args.target == 'market1501_':
-=======
-    if args.target == 'market1501':
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
         target_num_classes += 1
     # Create model
     Encoder, TaskNet, DynamicNet = models.create(args.arch, num_features=args.features,
                           dropout=args.dropout, num_classes=num_classes, target_num=target_num_classes, cut_layer='layer3')
 
-<<<<<<< HEAD
     # d-m:knn=6
     # m-d:knn=8
-=======
-    # m->d: k=8 is best
-    # others: k=7
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
     invNet = InvNet(args.features, target_num_classes, beta=0.05, knn=6, alpha=0.01).cuda()
 
     # Load from checkpoint
@@ -174,21 +133,13 @@ def main(args):
     evaluator = Evaluator([Encoder, TaskNet, DynamicNet])
     if args.evaluate:
         print("Test:")
-<<<<<<< HEAD
         evaluator.evaluate(query_loader, gallery_loader, dataset.query, dataset.gallery, args.output_feature)
-=======
-        evaluator.evaluate(query_loader, gallery_loader, dataset.query, dataset.gallery, args.output_feature, save_dir='duke')
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
         return
 
     # Criterion
     criterion = []
     criterion.append(nn.CrossEntropyLoss().cuda())
-<<<<<<< HEAD
     criterion.append(TripletLoss(margin=0.3,num_instances=4).cuda())
-=======
-    # criterion.append(TripletLoss(margin=args.margin).cuda())
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
 
     # Optimizer
     base_param_ids = set(map(id, Encoder.module.base.parameters()))
@@ -236,7 +187,6 @@ def main(args):
         elif epoch <=20:
             lr = args.lr * (0.1 ** ((epoch-10) // step_size))
         elif epoch <=30:
-<<<<<<< HEAD
             lr = 1e-5
         else:
             lr = 1e-6
@@ -250,12 +200,6 @@ def main(args):
         # else:
         #     lr = 1e-6
 
-=======
-            lr = 1e-6
-        else:
-            lr = 1e-7
-            
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
         for g in optimizer_Encoder.param_groups:
             g['lr'] = lr * g.get('lr_mult', 1)
         for g in optimizer_Ide.param_groups:
@@ -277,24 +221,9 @@ def main(args):
             'epoch': epoch + 1,
         }, fpath=osp.join(args.logs_dir, 'checkpoint.pth.tar'))
 
-<<<<<<< HEAD
         evaluator = Evaluator(model)
         if epoch > 9 and epoch % 1 == 0:tmp=evaluator.evaluate(query_loader, gallery_loader, dataset.query, dataset.gallery, args.output_feature)
        
-=======
-        if epoch ==12:
-            save_checkpoint({
-            'Encoder': Encoder.module.state_dict(),
-            'TaskNet': TaskNet.module.state_dict(),
-            'DynamicNet': DynamicNet.module.state_dict(),
-            'InvNet': invNet.state_dict(), 
-            'epoch': epoch + 1,
-        }, fpath=osp.join(args.logs_dir, 'epoch12.pth.tar'))
-
-        evaluator = Evaluator(model)
-        if epoch > 10 and epoch % 2 == 0:tmp=evaluator.evaluate(query_loader, gallery_loader, dataset.query, dataset.gallery, args.output_feature)
-        
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
         if(tmp>best):
             save_checkpoint({
             'Encoder': Encoder.module.state_dict(),
@@ -321,11 +250,7 @@ if __name__ == '__main__':
                         choices=['market1501_', 'DukeMTMC-reID_', 'msmt', 'cuhk03_detected', 'VehicleID_V1.0', 'VeRi','SYSU','SYSU_IR'])
     # target
     parser.add_argument('-t', '--target', type=str, default='market1501',
-<<<<<<< HEAD
                         choices=['market1501_', 'DukeMTMC-reID_', 'msmt', 'viper','VehicleID_V1.0', 'VeRi', 'PRID', 'GRID', 'VIPeR'])
-=======
-                        choices=['market1501_', 'DukeMTMC-reID_', 'msmt', 'viper','VehicleID_V1.0', 'PRID', 'GRID', 'VIPeR'])
->>>>>>> f0906cafd587b9f863e29ed0904c7c6f81d0db32
     # images
     parser.add_argument('-b', '--batch-size', type=int, default=128, help="batch size for source")
     parser.add_argument('-j', '--workers', type=int, default=8)
