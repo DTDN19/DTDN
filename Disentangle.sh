@@ -1,8 +1,8 @@
 CUDA_VISIVBLE_DEVICES=0,1,2,3 \
 python -u baseline.py \
---data-dir /home/data/ \
--s DukeMTMC-reID_ \
--t market1501_ \
+--data-dir /media/HDD-1/home/peixian/chenpeixian/Dataset \
+-s market1501_ \
+-t DukeMTMC-reID_ \
 -a resnet50 \
 -b 128 \
 --height 256 \
@@ -11,7 +11,7 @@ python -u baseline.py \
 --epoch 40 \
 --workers=4 \
 --lr 0.08    \
---features 1024 \
+--features 2048 \
 # --resume ./logs/duke-market.pth.tar \
 # --evaluate
 # DukeMTMC-reID

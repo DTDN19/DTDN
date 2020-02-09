@@ -8,10 +8,10 @@ from torch.nn import init
 import torchvision
 import pdb
 # use the DTDN+IN:
-# from . import resnet_in as resnet
+from . import resnet_in as resnet
 
 # use the DTDN:
-from . import resnet
+# from . import resnet
 
 
 

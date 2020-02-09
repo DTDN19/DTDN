@@ -66,16 +66,11 @@ def get_data(data_dir, source, target, height, width, batch_size, re=0, workers=
                      transform=source_train_transformer),
         batch_size=batch_size, num_workers=workers,
         shuffle=True, pin_memory=True, drop_last=True)
-        # sampler=RandomIdentitySampler(dataset.source_train, batch_size, 4),
-        # pin_memory=True, drop_last=True) 
-        # 
     target_train_loader = DataLoader(
         Preprocessor(dataset.target_train, root=osp.join(dataset.target_images_dir, dataset.target_train_path),
                      transform=target_train_transformer),
         batch_size=batch_size, num_workers=workers,
         shuffle=True, pin_memory=True, drop_last=True)
-        # sampler=RandomIdentitySampler(dataset.source_train, batch_size, 4),
-        # pin_memory=True, drop_last=True) 
     query_loader = DataLoader(
         Preprocessor(dataset.query,
                      root=osp.join(dataset.target_images_dir, dataset.query_path), transform=test_transformer),
@@ -108,7 +103,7 @@ def main(args):
 
     # d-m:knn=6
     # m-d:knn=8
-    invNet = InvNet(args.features, target_num_classes, beta=0.05, knn=6, alpha=0.01).cuda()
+    invNet = InvNet(args.features, target_num_classes, beta=0.05, knn=10, alpha=0.01).cuda()
 
     # Load from checkpoint
     start_epoch = 0
@@ -139,7 +134,7 @@ def main(args):
     # Criterion
     criterion = []
     criterion.append(nn.CrossEntropyLoss().cuda())
-    criterion.append(TripletLoss(margin=0.3,num_instances=4).cuda())
+    # criterion.append(TripletLoss(margin=0.3,num_instances=4).cuda())
 
     # Optimizer
     base_param_ids = set(map(id, Encoder.module.base.parameters()))
