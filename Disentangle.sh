@@ -1,6 +1,6 @@
 CUDA_VISIVBLE_DEVICES=0,1,2,3 \
 python -u baseline.py \
---data-dir /media/HDD-1/home/peixian/chenpeixian/Dataset \
+--data-dir ./Dataset \
 -s market1501_ \
 -t DukeMTMC-reID_ \
 -a resnet50 \
